@@ -13,16 +13,40 @@ exports.show = exports.store = exports.index = void 0;
 const mongoose_1 = require("mongoose");
 const cart_services_1 = require("../../services/user/cart.services");
 const order_services_1 = require("../../services/user/order.services");
+const helper_1 = require("../../helper");
+const axios_config_1 = require("../../config/axios.config");
 /* find all order for specific user */
 const index = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userID = req.user.id;
+        const api_key = req.headers.api_key;
+        const token = yield req.headers.authorization;
+        const items = [];
+        const generatedHeader = yield (0, helper_1.getHeader)(api_key, token);
         const results = yield order_services_1.userOrderService.findAll({
             _id: new mongoose_1.Types.ObjectId(userID),
         });
+        const getUser = () => __awaiter(void 0, void 0, void 0, function* () {
+            const data = yield axios_config_1.axiosAuthRequest.get(`/api/v1/user/me`, generatedHeader);
+            return data.data.data;
+        });
+        for (let i = 0; i < results.length; i++) {
+            const element = results[i];
+            items.push({
+                _id: element._id,
+                user: yield getUser(),
+                name: element.name,
+                email: element.email,
+                phone: element.phone,
+                note: element.note,
+                payment_name: element.payment_name,
+                payment_number: element.payment_number,
+                payment_txid: element.payment_txid
+            });
+        }
         res.status(200).json({
             status: true,
-            data: results,
+            data: items,
         });
     }
     catch (error) {
@@ -78,6 +102,9 @@ const show = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const { id } = req.params;
         const userID = req.user.id;
+        const api_key = req.headers.api_key;
+        const generatedHeader = yield (0, helper_1.getHeaderWithoutToken)(api_key);
+        const items = [];
         /* order details info */
         const orderDocuments = yield order_services_1.userOrderService.findOneById({
             _id: new mongoose_1.Types.ObjectId(id),
@@ -88,9 +115,21 @@ const show = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
             user_id: new mongoose_1.Types.ObjectId(userID),
             order_id: new mongoose_1.Types.ObjectId(id),
         });
+        const getProduct = (id) => __awaiter(void 0, void 0, void 0, function* () {
+            let product = yield axios_config_1.axiosRequest.get(`/api/v1/product/${id}`, generatedHeader);
+            return product.data.data;
+        });
+        for (let i = 0; i < cartItems.length; i++) {
+            const element = cartItems[i];
+            items.push({
+                _id: element._id,
+                product: yield getProduct(element.product),
+                quantity: element.quantity
+            });
+        }
         res.status(200).json({
             status: true,
-            data: { "Order": orderDocuments, "Cart": cartItems },
+            data: { "Order": orderDocuments, "Cart": items },
         });
     }
     catch (error) {

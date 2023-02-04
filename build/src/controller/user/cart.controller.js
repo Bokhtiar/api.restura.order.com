@@ -23,18 +23,11 @@ const index = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
         /* generate http request header */
         // const generatedHeader = await getHeader(api_key, token);
         const generatedHeader = yield (0, helper_1.getHeaderWithoutToken)(api_key);
-        console.log("asdfas", generatedHeader);
         const items = [];
         const results = yield cart_services_1.cartService.findAll({ _id: new mongoose_1.Types.ObjectId(id) });
         const countCart = yield cart_services_1.cartService.CountDocument({
             _id: new mongoose_1.Types.ObjectId(id),
         });
-        //  const pid = "63db4d5e7d7bc0ba1b0e4042";
-        // const item = await axiosRequest.get(
-        //     `/api/v1/product/${pid}`,
-        //     generatedHeader
-        //   )
-        //   console.log("items product", item.data.data);
         const getProduct = (id) => __awaiter(void 0, void 0, void 0, function* () {
             let product = yield axios_config_1.axiosRequest.get(`/api/v1/product/${id}`, generatedHeader);
             return product.data.data;

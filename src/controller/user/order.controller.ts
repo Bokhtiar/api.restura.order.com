@@ -3,6 +3,8 @@ import { Request, Response, NextFunction } from "express";
 import { IOrderCreate } from "../../types/user/order.types";
 import { cartService } from "../../services/user/cart.services";
 import { userOrderService } from "../../services/user/order.services";
+import { getHeaderWithoutToken, getHeader } from "../../helper";
+import { axiosRequest, axiosAuthRequest } from "../../config/axios.config";
 
 /* find all order for specific user */
 export const index = async (
@@ -12,13 +14,38 @@ export const index = async (
 ) => {
   try {
     const userID = req.user.id;
+    const api_key :any = req.headers.api_key
+    const token: any = await req.headers.authorization;
+    const items = [];
+    const generatedHeader = await getHeader(api_key, token);
+    
     const results = await userOrderService.findAll({
       _id: new Types.ObjectId(userID),
     });
 
+    const getUser = async() => {
+      const data = await axiosAuthRequest.get(`/api/v1/user/me`, generatedHeader)
+      return data.data.data
+    }
+ 
+    for (let i = 0; i < results.length; i++) {
+      const element = results[i];
+      items.push({
+        _id : element._id,
+        user : await getUser(),
+        name: element.name,
+        email: element.email,
+        phone: element.phone,
+        note: element.note,
+        payment_name: element.payment_name,
+        payment_number: element.payment_number,
+        payment_txid: element.payment_txid
+      })
+    }
+
     res.status(200).json({
       status: true,
-      data: results,
+      data: items,
     });
   } catch (error: any) {
     console.log(error);
@@ -88,7 +115,10 @@ export const show = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const userID = req.user.id;
+    const api_key: any = req.headers.api_key;
+    const generatedHeader = await getHeaderWithoutToken(api_key);
 
+    const items = [];
     /* order details info */
     const orderDocuments = await userOrderService.findOneById({
       _id: new Types.ObjectId(id),
@@ -100,9 +130,27 @@ export const show = async (req: Request, res: Response, next: NextFunction) => {
       user_id: new Types.ObjectId(userID),
       order_id: new Types.ObjectId(id),
     });
+
+    const getProduct = async (id: any) => {
+      let product = await axiosRequest.get(
+        `/api/v1/product/${id}`,
+        generatedHeader
+      )
+      return product.data.data;
+    }
+
+    for (let i = 0; i < cartItems.length; i++) {
+      const element = cartItems[i];
+      items.push({
+        _id: element._id,
+        product: await getProduct(element.product),
+        quantity: element.quantity
+      });
+    }
+
     res.status(200).json({
       status: true,
-      data: { "Order":orderDocuments, "Cart":cartItems },
+      data: { "Order": orderDocuments, "Cart": items },
     });
   } catch (error: any) {
     console.log(error);

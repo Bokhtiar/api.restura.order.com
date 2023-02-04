@@ -14,33 +14,21 @@ export const index = async (
   try {
     const { id } = req.user;
     const api_key: any = req.headers.api_key;
-
-    
     const token: any = await req.headers.authorization;
 
     /* generate http request header */
     // const generatedHeader = await getHeader(api_key, token);
     const generatedHeader = await getHeaderWithoutToken(api_key);
-    console.log("asdfas",generatedHeader);
-    
+
     const items = [];
- 
+
     const results = await cartService.findAll({ _id: new Types.ObjectId(id) });
     const countCart = await cartService.CountDocument({
       _id: new Types.ObjectId(id),
-    }); 
+    });
 
-    //  const pid = "63db4d5e7d7bc0ba1b0e4042";
-
-    // const item = await axiosRequest.get(
-    //     `/api/v1/product/${pid}`,
-    //     generatedHeader
-    //   )
-    //   console.log("items product", item.data.data);
-    
-    const getProduct = async(id:any)=>{
-
-        let product = await axiosRequest.get(
+    const getProduct = async (id: any) => {
+      let product = await axiosRequest.get(
         `/api/v1/product/${id}`,
         generatedHeader
       )
@@ -53,7 +41,7 @@ export const index = async (
       items.push({
         _id: element._id,
         product: await getProduct(element.product),
-        quantity: element.quantity 
+        quantity: element.quantity
       });
     }
 
