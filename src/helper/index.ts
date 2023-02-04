@@ -1,5 +1,5 @@
 import Mongoose from "mongoose";
-import { IHttpErrorResponse, IHttpSuccessResponse, IHeader } from "../types/index.types";
+import { IHttpErrorResponse, IHttpSuccessResponse, IHeader, IHeaderWithoutToken } from "../types/index.types";
 
 /* Valid mongoose ID */
 export const validMongooseId = (id: Mongoose.Types.ObjectId | string) => {
@@ -42,4 +42,18 @@ export const getHeader = async (
   };
 
   return header;
+};
+
+
+/* Generate API headers */
+export const getHeaderWithoutToken = async (
+  api_key: string,
+): Promise<IHeaderWithoutToken> => {
+  const WithoutTokenheader = {
+    headers: {
+      api_key: api_key,
+    },
+  };
+
+  return WithoutTokenheader;
 };

@@ -51,4 +51,10 @@ declare global {
       api_key: string;
     };
   }
+
+  export interface IHeaderWithoutToken {
+    headers: {
+      api_key: string;
+    };
+  }
   

@@ -14,12 +14,12 @@ export const userPermission = async (
         status: false,
         message: "Authorization token not found.",
       });
-    }
+    } 
 
     // decode token
     const splitToken = await token.split(" ")[1];
     const decode = await jwt.verify(splitToken, process.env.JWT_SECRET);
-    console.log(decode);
+
     
     if (decode.role !== "user") {
       return res.status(410).json({

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getHeader = exports.HttpSuccessResponse = exports.HttpErrorResponse = exports.validMongooseId = void 0;
+exports.getHeaderWithoutToken = exports.getHeader = exports.HttpSuccessResponse = exports.HttpErrorResponse = exports.validMongooseId = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 /* Valid mongoose ID */
 const validMongooseId = (id) => {
@@ -49,3 +49,13 @@ const getHeader = (api_key, token) => __awaiter(void 0, void 0, void 0, function
     return header;
 });
 exports.getHeader = getHeader;
+/* Generate API headers */
+const getHeaderWithoutToken = (api_key) => __awaiter(void 0, void 0, void 0, function* () {
+    const WithoutTokenheader = {
+        headers: {
+            api_key: api_key,
+        },
+    };
+    return WithoutTokenheader;
+});
+exports.getHeaderWithoutToken = getHeaderWithoutToken;
