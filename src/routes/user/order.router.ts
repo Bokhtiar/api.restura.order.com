@@ -7,4 +7,4 @@ export const orderRouter: Router = Router();
 orderRouter.get("/", orderController.index);
 orderRouter.post("/", OrderValidators, orderController.store);
 orderRouter.get("/:id", orderController.show);
- 
+  
