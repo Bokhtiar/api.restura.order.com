@@ -36,9 +36,6 @@ export const index = async (
       return product.data.data;
     }
 
-    
-
-
     for (let i = 0; i < results.length; i++) {
       const element = results[i];
       items.push({
