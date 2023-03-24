@@ -4,7 +4,7 @@ import { IOrderCreate } from "../../types/user/order.types";
 import { cartService } from "../../services/user/cart.services";
 import { userOrderService } from "../../services/user/order.services";
 import { getHeaderWithoutToken, getHeader } from "../../helper";
-import { axiosRequest, axiosAuthRequest } from "../../config/axios.config";
+import { axiosProductRequest, axiosAuthRequest } from "../../config/axios.config";
 
 /* find all order for specific user */
 export const index = async (
@@ -132,7 +132,7 @@ export const show = async (req: Request, res: Response, next: NextFunction) => {
     });
 
     const getProduct = async (id: any) => {
-      let product = await axiosRequest.get(
+      let product = await axiosProductRequest.get(
         `/api/v1/product/${id}`,
         generatedHeader
       )
