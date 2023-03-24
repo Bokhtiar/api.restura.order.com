@@ -29,7 +29,7 @@ const index = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
             _id: new mongoose_1.Types.ObjectId(id),
         });
         const getProduct = (id) => __awaiter(void 0, void 0, void 0, function* () {
-            let product = yield axios_config_1.axiosRequest.get(`/api/v1/product/${id}`, generatedHeader);
+            let product = yield axios_config_1.axiosProductRequest.get(`/api/v1/user/product/${id}`, generatedHeader);
             return product.data.data;
         });
         for (let i = 0; i < results.length; i++) {

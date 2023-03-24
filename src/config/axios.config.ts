@@ -1,7 +1,7 @@
 import axios from "axios";
-const ENDPOINT: string = process.env.PRODUCT_SERVICE_ENDPOINT || "";
+const ENDPOINT: string = process.env.PRODUCT_SERVICE_ENDPOINT || "http://localhost:4000/product";
 
-export const axiosRequest = axios.create({
+export const axiosProductRequest = axios.create({
   baseURL: ENDPOINT,
 });
 

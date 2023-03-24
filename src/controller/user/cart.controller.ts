@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { Types } from "mongoose";
 import { getHeader, getHeaderWithoutToken } from "../../helper";
-import { axiosRequest } from "../../config/axios.config";
+import { axiosProductRequest } from "../../config/axios.config";
 import { cartService } from "../../services/user/cart.services";
 import { IHeader } from "../../types/index.types";
 
@@ -19,21 +19,24 @@ export const index = async (
     /* generate http request header */
     // const generatedHeader = await getHeader(api_key, token);
     const generatedHeader = await getHeaderWithoutToken(api_key);
-
-    const items = [];
+    
+    const items = []; 
 
     const results = await cartService.findAll({ _id: new Types.ObjectId(id) });
+
     const countCart = await cartService.CountDocument({
       _id: new Types.ObjectId(id),
     });
 
     const getProduct = async (id: any) => {
-      let product = await axiosRequest.get(
-        `/api/v1/product/${id}`,
+      let product = await axiosProductRequest.get(
+        `/api/v1/user/product/${id}`,
         generatedHeader
       )
       return product.data.data;
     }
+
+    
 
 
     for (let i = 0; i < results.length; i++) {
