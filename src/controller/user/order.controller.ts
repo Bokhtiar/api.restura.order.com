@@ -22,7 +22,7 @@ export const index = async (
     const results = await userOrderService.findAll({
       _id: new Types.ObjectId(userID),
     }); 
-    console.log(results);
+
 
 
     // const getUser = async() => {
@@ -170,7 +170,7 @@ export const show = async (req: Request, res: Response, next: NextFunction) => {
 
     res.status(200).json({
       status: true,
-      data: { "Order": orderDocuments, "Cart": cartItems },
+      data: { "Order": orderDocuments, "Cart": items },
     });
   } catch (error: any) {
     console.log(error);

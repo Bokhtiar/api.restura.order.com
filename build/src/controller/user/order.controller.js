@@ -26,7 +26,6 @@ const index = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
         const results = yield order_services_1.userOrderService.findAll({
             _id: new mongoose_1.Types.ObjectId(userID),
         });
-        console.log(results);
         // const getUser = async() => {
         //   const data = await axiosAuthRequest.get(`/api/v1/user/me`, generatedHeader)
         //   return data.data.data
@@ -136,7 +135,7 @@ const show = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
         }
         res.status(200).json({
             status: true,
-            data: { "Order": orderDocuments, "Cart": cartItems },
+            data: { "Order": orderDocuments, "Cart": items },
         });
     }
     catch (error) {
