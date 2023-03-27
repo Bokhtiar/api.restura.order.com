@@ -9,7 +9,7 @@ const ENDPOINT = process.env.PRODUCT_SERVICE_ENDPOINT || "http://localhost:4000/
 exports.axiosProductRequest = axios_1.default.create({
     baseURL: ENDPOINT,
 });
-const AUTHENDPOINT = process.env.AUTH_SERVICE_ENDPOINT || "";
+const AUTHENDPOINT = process.env.AUTH_SERVICE_ENDPOINT || "http://localhost:4001/auth";
 exports.axiosAuthRequest = axios_1.default.create({
     baseURL: AUTHENDPOINT,
 });

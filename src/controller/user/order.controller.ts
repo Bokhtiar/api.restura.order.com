@@ -11,41 +11,48 @@ export const index = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+) => { 
   try {
     const userID = req.user.id;
-    const api_key :any = req.headers.api_key
-    const token: any = await req.headers.authorization;
-    const items = [];
-    const generatedHeader = await getHeader(api_key, token);
+    // const api_key :any = req.headers.api_key
+    // const token: any = await req.headers.authorization;
+    // const items = [];
+    // const generatedHeader = await getHeader(api_key, token);
     
     const results = await userOrderService.findAll({
       _id: new Types.ObjectId(userID),
-    });
+    }); 
+    console.log(results);
 
-    const getUser = async() => {
-      const data = await axiosAuthRequest.get(`/api/v1/user/me`, generatedHeader)
-      return data.data.data
-    }
+
+    // const getUser = async() => {
+    //   const data = await axiosAuthRequest.get(`/api/v1/user/me`, generatedHeader)
+    //   return data.data.data
+    // }
+    // console.log("get user", getUser());
+     
+    
  
-    for (let i = 0; i < results.length; i++) {
-      const element = results[i];
-      items.push({
-        _id : element._id,
-        user : await getUser(),
-        name: element.name,
-        email: element.email,
-        phone: element.phone,
-        note: element.note,
-        payment_name: element.payment_name,
-        payment_number: element.payment_number,
-        payment_txid: element.payment_txid
-      })
-    }
+    // for (let i = 0; i < results.length; i++) {
+    //   const element = results[i]; 
+     
+      
+    //   items.push({
+    //     _id : element._id,
+    //     user : await getUser(),
+    //     name: element.name,
+    //     email: element.email,
+    //     phone: element.phone,
+    //     note: element.note,
+    //     payment_name: element.payment_name,
+    //     payment_number: element.payment_number,
+    //     payment_txid: element.payment_txid
+    //   })
+    // }
 
     res.status(200).json({
       status: true,
-      data: items,
+      data: results,
     });
   } catch (error: any) {
     console.log(error);
@@ -113,6 +120,8 @@ export const store = async (
 /* find specific order details */
 export const show = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    console.log('hiasdfasd df');
+    
     const { id } = req.params;
     const userID = req.user.id;
     const api_key: any = req.headers.api_key;
@@ -125,22 +134,33 @@ export const show = async (req: Request, res: Response, next: NextFunction) => {
       user_id: new Types.ObjectId(userID),
     });
 
+    console.log(orderDocuments);
+    
+
     /* order cart items */
     const cartItems = await userOrderService.orderCartItems({
       user_id: new Types.ObjectId(userID),
       order_id: new Types.ObjectId(id),
     });
 
+    console.log("cart", cartItems);
+    
+
     const getProduct = async (id: any) => {
       let product = await axiosProductRequest.get(
-        `/api/v1/product/${id}`,
+        `/api/v1/user/product/${id}`,
         generatedHeader
       )
-      return product.data.data;
-    }
+      return product.data.data; 
+    } 
+    console.log("test",getProduct);
+    
 
+    
     for (let i = 0; i < cartItems.length; i++) {
       const element = cartItems[i];
+      console.log("product id", element.product);
+      
       items.push({
         _id: element._id,
         product: await getProduct(element.product),
@@ -150,7 +170,7 @@ export const show = async (req: Request, res: Response, next: NextFunction) => {
 
     res.status(200).json({
       status: true,
-      data: { "Order": orderDocuments, "Cart": items },
+      data: { "Order": orderDocuments, "Cart": cartItems },
     });
   } catch (error: any) {
     console.log(error);

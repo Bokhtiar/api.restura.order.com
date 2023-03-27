@@ -19,34 +19,36 @@ const axios_config_1 = require("../../config/axios.config");
 const index = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userID = req.user.id;
-        const api_key = req.headers.api_key;
-        const token = yield req.headers.authorization;
-        const items = [];
-        const generatedHeader = yield (0, helper_1.getHeader)(api_key, token);
+        // const api_key :any = req.headers.api_key
+        // const token: any = await req.headers.authorization;
+        // const items = [];
+        // const generatedHeader = await getHeader(api_key, token);
         const results = yield order_services_1.userOrderService.findAll({
             _id: new mongoose_1.Types.ObjectId(userID),
         });
-        const getUser = () => __awaiter(void 0, void 0, void 0, function* () {
-            const data = yield axios_config_1.axiosAuthRequest.get(`/api/v1/user/me`, generatedHeader);
-            return data.data.data;
-        });
-        for (let i = 0; i < results.length; i++) {
-            const element = results[i];
-            items.push({
-                _id: element._id,
-                user: yield getUser(),
-                name: element.name,
-                email: element.email,
-                phone: element.phone,
-                note: element.note,
-                payment_name: element.payment_name,
-                payment_number: element.payment_number,
-                payment_txid: element.payment_txid
-            });
-        }
+        console.log(results);
+        // const getUser = async() => {
+        //   const data = await axiosAuthRequest.get(`/api/v1/user/me`, generatedHeader)
+        //   return data.data.data
+        // }
+        // console.log("get user", getUser());
+        // for (let i = 0; i < results.length; i++) {
+        //   const element = results[i]; 
+        //   items.push({
+        //     _id : element._id,
+        //     user : await getUser(),
+        //     name: element.name,
+        //     email: element.email,
+        //     phone: element.phone,
+        //     note: element.note,
+        //     payment_name: element.payment_name,
+        //     payment_number: element.payment_number,
+        //     payment_txid: element.payment_txid
+        //   })
+        // }
         res.status(200).json({
             status: true,
-            data: items,
+            data: results,
         });
     }
     catch (error) {
@@ -100,6 +102,7 @@ exports.store = store;
 /* find specific order details */
 const show = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log('hiasdfasd df');
         const { id } = req.params;
         const userID = req.user.id;
         const api_key = req.headers.api_key;
@@ -110,17 +113,21 @@ const show = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
             _id: new mongoose_1.Types.ObjectId(id),
             user_id: new mongoose_1.Types.ObjectId(userID),
         });
+        console.log(orderDocuments);
         /* order cart items */
         const cartItems = yield order_services_1.userOrderService.orderCartItems({
             user_id: new mongoose_1.Types.ObjectId(userID),
             order_id: new mongoose_1.Types.ObjectId(id),
         });
+        console.log("cart", cartItems);
         const getProduct = (id) => __awaiter(void 0, void 0, void 0, function* () {
-            let product = yield axios_config_1.axiosRequest.get(`/api/v1/product/${id}`, generatedHeader);
+            let product = yield axios_config_1.axiosProductRequest.get(`/api/v1/user/product/${id}`, generatedHeader);
             return product.data.data;
         });
+        console.log("test", getProduct);
         for (let i = 0; i < cartItems.length; i++) {
             const element = cartItems[i];
+            console.log("product id", element.product);
             items.push({
                 _id: element._id,
                 product: yield getProduct(element.product),
@@ -129,7 +136,7 @@ const show = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
         }
         res.status(200).json({
             status: true,
-            data: { "Order": orderDocuments, "Cart": items },
+            data: { "Order": orderDocuments, "Cart": cartItems },
         });
     }
     catch (error) {
